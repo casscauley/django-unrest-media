@@ -42,7 +42,7 @@ class FileModel(models.Model):
   def shortcode(self):
     shortcode = ''
     if self.type() == 'image':
-      shortcode = "![%s](%s)" % (self.filename, self.file.url)
+      shortcode = "![{}]({})".format(self.filename, self.file.url)
     if self.type() == 'code':
       shortcode = "[local %s]" % self.file.name
     return shortcode
@@ -50,7 +50,7 @@ class FileModel(models.Model):
   def save(self,*args,**kwargs):
     self.filename = self.filename or str(self.file).split('/')[-1]
     self.name = self.name or self.filename
-    super(FileModel,self).save(*args,**kwargs)
+    super().save(*args,**kwargs)
 
   class Meta:
     abstract = True
@@ -110,7 +110,7 @@ class Photo(FileModel):
       self.external_url = self.external_url.replace('youtube.com/','youtube.com/embed/')
       if not "?" in self.external_url:
         self.external_url +="?autoplay=1&rel=0"
-    super(Photo,self).save(*args,**kwargs)
+    super().save(*args,**kwargs)
   class Meta:
     ordering = ('name',)
 
@@ -123,11 +123,11 @@ class TaggedPhoto(models.Model):
   def save(self,*args,**kwargs):
     if self.order == 9999:
       self.order = self.__class__.objects.filter(content_type=self.content_type,object_id=self.object_id).count()
-    super(TaggedPhoto,self).save(*args,**kwargs)
+    super().save(*args,**kwargs)
   class Meta:
     ordering = ("order",)
 
-class PhotosMixin(object):
+class PhotosMixin:
   _use_default_photo = True
   @property
   def thumbnail(self):
@@ -150,7 +150,7 @@ class PhotosMixin(object):
     return list(Photo.objects.filter(taggedphoto__content_type_id=self._ct_id,
                                      taggedphoto__object_id=self.id).order_by("taggedphoto__order"))
 
-class FilesMixin(object):
+class FilesMixin:
   @cached_property
   def first_file(self):
     try:

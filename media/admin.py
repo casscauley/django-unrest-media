@@ -15,6 +15,7 @@ from .models import PhotoTag, Photo, MiscFile, TaggedPhoto, TaggedFile, Uploaded
 
 import json
 
+@admin.register(Photo)
 class PhotoAdmin(RawMixin,CropAdmin):
   form = StaffMemberForm
   list_display = ('__str__','_thumbnail','approved','upload_dt')
@@ -33,12 +34,12 @@ class PhotoAdmin(RawMixin,CropAdmin):
 
 class TaggedPhotoAdmin(admin.ModelAdmin):
   def get_fields(self,request,obj=None):
-    fields = super(TaggedPhotoAdmin,self).get_fields(request,obj)
+    fields = super().get_fields(request,obj)
     if obj and not 'dropphoto' in fields:
       return list(fields) + ['dropphoto']
     return fields
   def get_readonly_fields(self,request,obj=None):
-    fields = super(TaggedPhotoAdmin,self).get_readonly_fields(request,obj)
+    fields = super().get_readonly_fields(request,obj)
     if obj and not 'dropphoto' in fields:
       return list(fields) + ['dropphoto']
     return fields
@@ -68,17 +69,16 @@ class TaggedFileInline(RawMixin,GenericTabularInline):
   raw_id_fields = ('file',)
   extra = 0
 
+@admin.register(PhotoTag)
 class PhotoTagAdmin(admin.ModelAdmin):
   list_display = ("__str__","bulk_link")
   def bulk_link(self, obj):
     return format_html('<a href="/media_files/photo/bulk_tag/{}">Bulk Tag {} Photos</a>',obj.id,obj)
 
+@admin.register(MiscFile)
 class MiscFileAdmin(admin.ModelAdmin):
   form = StaffMemberForm
 
-admin.site.register(Photo,PhotoAdmin)
-admin.site.register(MiscFile,MiscFileAdmin)
-admin.site.register(PhotoTag,PhotoTagAdmin)
 
 @admin.register(UploadedFile)
 class UploadedFileAdmin(admin.ModelAdmin):

@@ -124,7 +124,7 @@ def bulk_photo_upload(request):
     for f in request.FILES.getlist('file'):
       try:
         Image.open(f)
-      except IOError:
+      except OSError:
         image_list.append({
           'error':"This does not appear to be a valid image",
           'name': f.name

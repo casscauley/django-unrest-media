@@ -86,7 +86,7 @@ class Command(BaseCommand):
 
     msg = '%s photos have been uploaded to %s from this email address.'\
         '\n\nTo modify the name and caption on these photos, visit the following url.\n\n%s'
-    for addr,count in user_photos.items():
+    for addr,count in list(user_photos.items()):
       if not user_from_email(user):
         pass #!
       print(addr)
